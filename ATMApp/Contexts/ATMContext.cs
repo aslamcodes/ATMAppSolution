@@ -16,9 +16,7 @@ namespace ATMApp.Contexts
         {
             modelBuilder.Entity<Card>().HasKey(c => c.CardId);
             modelBuilder.Entity<Card>().HasIndex(c => c.CardNumber).IsUnique();
-
             modelBuilder.Entity<Account>().HasKey(a => a.AccountId);
-
             #region Relations
             modelBuilder.Entity<Card>()
                 .HasOne(c => c.Account)

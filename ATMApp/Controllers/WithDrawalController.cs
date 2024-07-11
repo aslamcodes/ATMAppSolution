@@ -1,10 +1,10 @@
 ﻿using ATMApp.Controllers.DTO;
+using ATMApp.Exceptions;
 using ATMApp.Exceptions.Account;
 using ATMApp.Exceptions.Card;
 using ATMApp.Interfaces;
 using ATMApp.Models;
 using ATMApp.Models.DTOs;
-using ATMApp.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ATMApp.Controllers
@@ -56,6 +56,18 @@ namespace ATMApp.Controllers
                 var result = await _services.WithdrawAmount(data);
 
                 return Ok(result);
+            }
+            catch (WithdrawalAmountExceedsException e)
+            {
+                return BadRequest(new ErrorModel(e.Message, StatusCodes.Status400BadRequest));
+            }
+            catch (InsufficientBalanceException e)
+            {
+                return BadRequest(new ErrorModel(e.Message, StatusCodes.Status400BadRequest));
+            }
+            catch (PinMismatchException e)
+            {
+                return BadRequest(new ErrorModel(e.Message, StatusCodes.Status400BadRequest));
             }
             catch (CardNotFound e)
             {

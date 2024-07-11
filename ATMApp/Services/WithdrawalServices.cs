@@ -34,7 +34,7 @@ namespace ATMApp.Services
         public async Task<ResponseDTO> WithdrawAmount(DepositAndWithdrawalDTO withdrawalDTO)
         {
             var allCards = await _cardRepository.Get();
-            var card = allCards.FirstOrDefault(c=>c.CardNumber == withdrawalDTO.CardNumber);
+            var card = allCards.FirstOrDefault(c => c.CardNumber == withdrawalDTO.CardNumber);
             var account = await _accountRepository.Get(card.AccountId);
 
 

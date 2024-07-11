@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ATMApp.Migrations
 {
     [DbContext(typeof(ATMContext))]
-    [Migration("20240711102350_init")]
-    partial class init
+    [Migration("20240711105941_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
