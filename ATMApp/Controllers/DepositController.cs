@@ -1,4 +1,5 @@
-﻿using ATMApp.Models;
+﻿using ATMApp.Interfaces;
+using ATMApp.Models;
 using ATMApp.Models.DTOs;
 using ATMApp.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -7,11 +8,11 @@ namespace ATMApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DepositController : Controller
+    public class DepositController : ControllerBase
     {
-        private readonly DepositServices _depositServices;
+        private readonly IDepositServices _depositServices;
 
-        public DepositController(DepositServices depositServices)
+        public DepositController(IDepositServices depositServices)
         {
             _depositServices = depositServices;
         }

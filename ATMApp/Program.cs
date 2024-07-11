@@ -1,4 +1,8 @@
 using ATMApp.Contexts;
+using ATMApp.Interfaces;
+using ATMApp.Models;
+using ATMApp.Repositories;
+using ATMApp.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace ATMApp
@@ -16,11 +20,27 @@ namespace ATMApp
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddDbContext<ATMContext>(options =>
-            {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-            });
+            //builder.Services.AddDbContext<ATMContext>(options =>
+            //{
+            //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            //});
 
+            #region contexts
+            builder.Services.AddDbContext<ATMContext>(
+                options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+                );
+            #endregion
+
+            #region repositories
+            builder.Services.AddScoped<IRepository<int, Card>, CardRepository>();
+            builder.Services.AddScoped<IRepository<int, Account>, AccountRepository>();
+            #endregion
+
+            #region services
+            builder.Services.AddScoped<ICardServices, CardServices>();
+            builder.Services.AddScoped<IDepositServices, DepositServices>();
+            builder.Services.AddScoped<IWithdrawalService, WithdrawalServices>();
+            #endregion
 
             var app = builder.Build();
 

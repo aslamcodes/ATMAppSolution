@@ -1,6 +1,7 @@
 ﻿using ATMApp.Controllers.DTO;
 using ATMApp.Exceptions.Account;
 using ATMApp.Exceptions.Card;
+using ATMApp.Interfaces;
 using ATMApp.Models;
 using ATMApp.Models.DTOs;
 using ATMApp.Services;
@@ -10,15 +11,15 @@ namespace ATMApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class WithDrawalController : Controller
+    public class WithDrawalController : ControllerBase
     {
-        private readonly WithdrawalServices _services;
-        public WithDrawalController(WithdrawalServices services)
+        private readonly IWithdrawalService _services;
+        public WithDrawalController(IWithdrawalService services)
         {
             _services = services;
         }
 
-        [HttpGet("/balance")]
+        [HttpPost("/balance")]
         [ProducesResponseType(typeof(BalanceResponseDto), StatusCodes.Status200OK)]
         [ProducesErrorResponseType(typeof(ErrorModel))]
         public async Task<ActionResult<BalanceResponseDto>> GetBalance([FromBody] BalanceDTO data)

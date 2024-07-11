@@ -1,10 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace ATMApp.Migrations
 {
-    public partial class initial : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -15,6 +16,7 @@ namespace ATMApp.Migrations
                     AccountId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Balance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    AccountNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AccountHolderName = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -29,9 +31,8 @@ namespace ATMApp.Migrations
                     CardId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CardNumber = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Pin = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PinHashKey = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Balance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Pin = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    PinHashKey = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     AccountId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
