@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ATMApp.Migrations
 {
     [DbContext(typeof(ATMContext))]
-    [Migration("20240711102350_init")]
-    partial class init
+    [Migration("20240711113007_auto-add")]
+    partial class autoadd
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -46,6 +46,29 @@ namespace ATMApp.Migrations
                     b.HasKey("AccountId");
 
                     b.ToTable("Accounts");
+
+                    b.HasData(
+                        new
+                        {
+                            AccountId = 1,
+                            AccountHolderName = "John Doe",
+                            AccountNumber = "123456789",
+                            Balance = 10000m
+                        },
+                        new
+                        {
+                            AccountId = 2,
+                            AccountHolderName = "Jane Doe",
+                            AccountNumber = "987654321",
+                            Balance = 5000m
+                        },
+                        new
+                        {
+                            AccountId = 3,
+                            AccountHolderName = "John Doe",
+                            AccountNumber = "123456789",
+                            Balance = 10000m
+                        });
                 });
 
             modelBuilder.Entity("ATMApp.Models.Card", b =>

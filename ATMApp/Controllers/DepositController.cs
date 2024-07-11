@@ -1,7 +1,7 @@
-﻿using ATMApp.Interfaces;
+﻿using ATMApp.Exceptions;
+using ATMApp.Interfaces;
 using ATMApp.Models;
 using ATMApp.Models.DTOs;
-using ATMApp.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ATMApp.Controllers
@@ -28,6 +28,19 @@ namespace ATMApp.Controllers
 
                 return Ok(result);
             }
+            catch (DepositAmountExceedsException e)
+            {
+                return BadRequest(new ErrorModel(e.Message, StatusCodes.Status400BadRequest));
+            }
+            catch (AccountNotFoundException e)
+            {
+                return NotFound(new ErrorModel(e.Message, StatusCodes.Status404NotFound));
+            }
+            catch (PinMismatchException e)
+            {
+                return BadRequest(new ErrorModel(e.Message, StatusCodes.Status400BadRequest));
+            }
+
             catch (Exception)
             {
 

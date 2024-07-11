@@ -1,4 +1,5 @@
 ﻿using ATMApp.Exceptions;
+using ATMApp.Exceptions.Card;
 using ATMApp.Interfaces;
 using ATMApp.Models;
 using ATMApp.Models.DTOs;
@@ -20,13 +21,8 @@ namespace ATMApp.Services
         public async Task<int> CheckBalance(BalanceDTO balanceDTO)
         {
             var allCards = await _cardRepository.Get();
-            var card = allCards.FirstOrDefault(c => c.CardNumber == balanceDTO.CardNumber);
-            var account = await _accountRepository.Get(card.AccountId);
-
-            if (account == null)
-            {
-                throw new AccountNotFoundException();
-            }
+            var card = allCards.FirstOrDefault(c => c.CardNumber == balanceDTO.CardNumber) ?? throw new CardNotFound();
+            var account = await _accountRepository.Get(card.AccountId) ?? throw new AccountNotFoundException();
             var balance = account.Balance;
             return (int)balance;
         }
@@ -34,7 +30,7 @@ namespace ATMApp.Services
         public async Task<ResponseDTO> WithdrawAmount(DepositAndWithdrawalDTO withdrawalDTO)
         {
             var allCards = await _cardRepository.Get();
-            var card = allCards.FirstOrDefault(c=>c.CardNumber == withdrawalDTO.CardNumber);
+            var card = allCards.FirstOrDefault(c => c.CardNumber == withdrawalDTO.CardNumber);
             var account = await _accountRepository.Get(card.AccountId);
 
 
