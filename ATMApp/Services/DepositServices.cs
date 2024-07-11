@@ -22,7 +22,7 @@ namespace ATMApp.Services
         {
 
             var cards = await _cardRepository.Get();
-            Card card = cards.FirstOrDefault(c => c.CardNumber == depositDTO.CardNumber);
+            var card = cards.FirstOrDefault(c => c.CardNumber == depositDTO.CardNumber);
 
             HMACSHA512 hMACSHA = new HMACSHA512(card.PinHashKey);
 
@@ -30,8 +30,7 @@ namespace ATMApp.Services
             bool isPasswordSame = ComparePassword(encrypterPass, card.Pin);
             if (isPasswordSame)
             {
-                var accounts = await _accountRepository.Get();
-                Account account = accounts.FirstOrDefault(c => c.AccountId == card.AccountId);
+                var account = await _accountRepository.Get(card.AccountId);
 
                 if (account == null)
                     throw new AccountNotFoundException();
@@ -47,6 +46,7 @@ namespace ATMApp.Services
 
                 return responseDTO;
             }
+            throw new PinMismatchException();
         }
 
 

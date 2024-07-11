@@ -2,6 +2,8 @@
 using ATMApp.Interfaces;
 using ATMApp.Models;
 using ATMApp.Models.DTOs;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace ATMApp.Services
 {
@@ -17,35 +19,64 @@ namespace ATMApp.Services
         }
         public async Task<int> CheckBalance(BalanceDTO balanceDTO)
         {
-            var account = await _accountRepository.Get(balanceDTO.CardNumber);
+            var allCards = await _cardRepository.Get();
+            var card = allCards.FirstOrDefault(c => c.CardNumber == balanceDTO.CardNumber);
+            var account = await _accountRepository.Get(card.AccountId);
+
             if (account == null)
             {
-                throw new Exception("Account not found");
+                throw new AccountNotFoundException();
             }
             var balance = account.Balance;
             return (int)balance;
-
         }
 
         public async Task<ResponseDTO> WithdrawAmount(DepositAndWithdrawalDTO withdrawalDTO)
         {
-            var account = await _accountRepository.Get(withdrawalDTO.CardNumber);
-            if (account == null)
-                throw new AccountNotFoundException();
+            var allCards = await _cardRepository.Get();
+            var card = allCards.FirstOrDefault(c=>c.CardNumber == withdrawalDTO.CardNumber);
+            var account = await _accountRepository.Get(card.AccountId);
 
-            if (withdrawalDTO.Amount > 10000)
-                throw new WithdrawalAmountExceedsException();
 
-            if (withdrawalDTO.Amount > account.Balance)
-                throw new InsufficientBalanceException();
+            HMACSHA512 hMACSHA = new HMACSHA512(card.PinHashKey);
 
-            account.Balance -= withdrawalDTO.Amount;
-            await _accountRepository.Update(account);
+            var encrypterPass = hMACSHA.ComputeHash(Encoding.UTF8.GetBytes(withdrawalDTO.Pin));
+            bool isPasswordSame = ComparePassword(encrypterPass, card.Pin);
 
-            var responseDTO = new ResponseDTO();
-            responseDTO.CurrentBalance = account.Balance;
+            if (isPasswordSame)
+            {
+                if (account == null)
+                    throw new AccountNotFoundException();
 
-            return responseDTO;
+                if (withdrawalDTO.Amount > 10000)
+                    throw new WithdrawalAmountExceedsException();
+
+                if (withdrawalDTO.Amount > account.Balance)
+                    throw new InsufficientBalanceException();
+
+                account.Balance -= withdrawalDTO.Amount;
+                await _accountRepository.Update(account);
+
+                var responseDTO = new ResponseDTO();
+                responseDTO.CurrentBalance = account.Balance;
+
+                return responseDTO;
+            }
+
+            throw new PinMismatchException();
+
+        }
+
+        private bool ComparePassword(byte[] encrypterPass, byte[] password)
+        {
+            for (int i = 0; i < encrypterPass.Length; i++)
+            {
+                if (encrypterPass[i] != password[i])
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

@@ -5,7 +5,7 @@ namespace ATMApp.Models.DTOs
     public class BalanceDTO
     {
         [Required]
-        public int CardNumber { get; set; }
+        public string CardNumber { get; set; }
 
         [Required]
         public string Pin { get; set; }
