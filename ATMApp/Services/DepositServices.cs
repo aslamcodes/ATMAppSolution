@@ -1,6 +1,9 @@
-﻿using ATMApp.Interfaces;
+﻿using ATMApp.Exceptions;
+using ATMApp.Interfaces;
 using ATMApp.Models;
 using ATMApp.Models.DTOs;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace ATMApp.Services
 {
@@ -17,20 +20,46 @@ namespace ATMApp.Services
 
         public async Task<ResponseDTO> DepositAmount(DepositAndWithdrawalDTO depositDTO)
         {
-            var account = await _accountRepository.Get(depositDTO.CardNumber);
-            if (account == null)
-                throw new Exception("Account not found");
 
-            if (depositDTO.Amount > 20000)
-                throw new Exception("Deposit amount exceeds limit");
+            var cards = await _cardRepository.Get();
+            Card card = cards.FirstOrDefault(c => c.CardNumber == depositDTO.CardNumber);
 
-            account.Balance += depositDTO.Amount;
-            await _accountRepository.Update(account);
+            HMACSHA512 hMACSHA = new HMACSHA512(card.PinHashKey);
 
-            var responseDTO = new ResponseDTO();
-            responseDTO.CurrentBalance = account.Balance;
+            var encrypterPass = hMACSHA.ComputeHash(Encoding.UTF8.GetBytes(depositDTO.Pin));
+            bool isPasswordSame = ComparePassword(encrypterPass, card.Pin);
+            if (isPasswordSame)
+            {
+                var accounts = await _accountRepository.Get();
+                Account account = accounts.FirstOrDefault(c => c.AccountId == card.AccountId);
 
-            return responseDTO;
+                if (account == null)
+                    throw new AccountNotFoundException();
+
+                if (depositDTO.Amount > 20000)
+                    throw new DepositAmountExceedsException();
+
+                account.Balance += depositDTO.Amount;
+                await _accountRepository.Update(account);
+
+                var responseDTO = new ResponseDTO();
+                responseDTO.CurrentBalance = account.Balance;
+
+                return responseDTO;
+            }
+        }
+
+
+        private bool ComparePassword(byte[] encrypterPass, byte[] password)
+        {
+            for (int i = 0; i < encrypterPass.Length; i++)
+            {
+                if (encrypterPass[i] != password[i])
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

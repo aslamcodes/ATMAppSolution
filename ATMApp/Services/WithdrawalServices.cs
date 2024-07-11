@@ -1,4 +1,5 @@
-﻿using ATMApp.Interfaces;
+﻿using ATMApp.Exceptions;
+using ATMApp.Interfaces;
 using ATMApp.Models;
 using ATMApp.Models.DTOs;
 
@@ -30,13 +31,13 @@ namespace ATMApp.Services
         {
             var account = await _accountRepository.Get(withdrawalDTO.CardNumber);
             if (account == null)
-                throw new Exception("Account not found");
+                throw new AccountNotFoundException();
 
             if (withdrawalDTO.Amount > 10000)
-                throw new Exception("Withdrawal amount exceeds limit");
+                throw new WithdrawalAmountExceedsException();
 
             if (withdrawalDTO.Amount > account.Balance)
-                throw new Exception("Insufficient funds");
+                throw new InsufficientBalanceException();
 
             account.Balance -= withdrawalDTO.Amount;
             await _accountRepository.Update(account);

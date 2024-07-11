@@ -8,6 +8,6 @@ namespace ATMApp.Models.DTOs
         public int CardNumber { get; set; }
 
         [Required]
-        public int Pin { get; set; }
+        public string Pin { get; set; }
     }
 }

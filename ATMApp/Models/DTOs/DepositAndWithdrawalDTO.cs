@@ -7,8 +7,8 @@ namespace ATMApp.Models.DTOs
         [Required]
         public decimal Amount { get; set; }
         [Required]
-        public int CardNumber { get; set; }
+        public string CardNumber { get; set; }
         [Required]
-        public int Pin { get; set; }
+        public string Pin { get; set; }
     }
 }

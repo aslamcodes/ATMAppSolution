@@ -4,9 +4,8 @@
     {
         public int CardId { get; set; }
         public string CardNumber { get; set; }
-        public string Pin { get; set; }
-        public string PinHashKey { get; set; }
-        public decimal Balance { get; set; }
+        public byte[] Pin { get; set; }
+        public byte[] PinHashKey { get; set; }
 
         public int AccountId { get; set; }
 
