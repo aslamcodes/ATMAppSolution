@@ -1,10 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace ATMApp.Migrations
 {
-    public partial class initial : Migration
+    public partial class autoadd : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -44,6 +45,21 @@ namespace ATMApp.Migrations
                         principalColumn: "AccountId",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "Accounts",
+                columns: new[] { "AccountId", "AccountHolderName", "AccountNumber", "Balance" },
+                values: new object[] { 1, "John Doe", "123456789", 10000m });
+
+            migrationBuilder.InsertData(
+                table: "Accounts",
+                columns: new[] { "AccountId", "AccountHolderName", "AccountNumber", "Balance" },
+                values: new object[] { 2, "Jane Doe", "987654321", 5000m });
+
+            migrationBuilder.InsertData(
+                table: "Accounts",
+                columns: new[] { "AccountId", "AccountHolderName", "AccountNumber", "Balance" },
+                values: new object[] { 3, "John Doe", "123456789", 10000m });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Cards_AccountId",
