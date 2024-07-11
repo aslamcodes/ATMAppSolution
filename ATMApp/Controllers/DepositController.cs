@@ -1,4 +1,5 @@
-﻿using ATMApp.Models.DTOs;
+﻿using ATMApp.Models;
+using ATMApp.Models.DTOs;
 using ATMApp.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,7 @@ namespace ATMApp.Controllers
     public class DepositController : Controller
     {
         private readonly DepositServices _depositServices;
+
         public DepositController(DepositServices depositServices)
         {
             _depositServices = depositServices;
@@ -16,6 +18,7 @@ namespace ATMApp.Controllers
 
         [HttpPut]
         [ProducesResponseType(typeof(ResponseDTO), StatusCodes.Status200OK)]
+        [ProducesErrorResponseType(typeof(ErrorModel))]
         public async Task<ActionResult<string>> Deposit([FromBody] DepositAndWithdrawalDTO deposit)
         {
             try
